@@ -17,17 +17,10 @@ def create_text_encoding(dataset: np.ndarray,
         vocabulary=vocabulary)
 
     model = tf.keras.models.Sequential()
-    model.add(keras.Input(shape=1, dtype=tf.string, batch_size=50))
+    model.add(keras.Input(shape=1, dtype=tf.string))
     model.add(vectorize_layer)
-    encoded_data = model.predict(dataset)
-    # subtract every element that isn't 0 by 1 because we want to adjust the vocabulary -> remove UKN entry
-    encoded_data = np.subtract(encoded_data,
-                               np.ones(encoded_data.shape),
-                               out=np.zeros(encoded_data.shape),
-                               where=encoded_data != 0).astype(int)
-
+    encoded_data = model.predict(dataset, batch_size=50)
     decoder = vectorize_layer.get_vocabulary().copy()
-    del decoder[1]  # remove UKN entry
     return encoded_data, decoder
 
 
@@ -55,5 +48,3 @@ def create_embedding_matrix(decoder: List[str], output_length: int = 50) -> (np.
         else:
             unknown_words += 1
     return embedding_matrix, unknown_words
-
-

@@ -29,7 +29,7 @@ def print_model(model):
     #keras.utils.plot_model(model, to_file='graphics/fnn', show_shapes=True, show_layer_names=True)
 
 
-def plot_loss(history: dict[str, list]):
+def plot_accuracy(history: dict[str, list]):
     font = {
             'weight': 'bold',
             'size': 14}
@@ -55,6 +55,31 @@ def plot_loss(history: dict[str, list]):
     ax.set_title("Model Accuracy", fontsize=15, weight='bold')
     plt.show()
 
+def plot_loss(history: dict[str, list]):
+    font = {
+            'weight': 'bold',
+            'size': 14}
+
+    matplotlib.rc('font', **font)
+    fig, ax = plt.subplots()
+    x_values = np.arange(len(history['loss']))
+    ax.set_ylabel("loss", labelpad=8, weight='bold')
+    ax.set_xlabel("epoch", labelpad=8, weight='bold')
+    ax.yaxis.get_label().set_fontsize(15)
+    ax.xaxis.get_label().set_fontsize(15)
+
+
+    ax.plot(x_values, history['loss'], label="training data")
+    ax.plot(x_values, history['val_loss'], label="test data")
+    ax.annotate(str(round(history['accuracy'][-1], 2)),
+                (x_values[-1], history['accuracy'][-1]),
+                (x_values[-1]-0.5, history['accuracy'][-1]-0.02))
+    ax.annotate(str(round(history['val_accuracy'][-1], 2)),
+                (x_values[-1], history['val_accuracy'][-1]),
+                (x_values[-1]-0.5, history['val_accuracy'][-1]+0.01))
+    ax.legend()
+    ax.set_title("Model Loss", fontsize=15, weight='bold')
+    plt.show()
 
 def plot_label_distribution(distribution):
     font = {'family': 'normal',

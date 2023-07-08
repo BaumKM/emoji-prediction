@@ -22,16 +22,16 @@ def train_rnn(dataset: DataFrame):
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
-    model = create_rnn_model(embedding_matrix, maximum_length, 7, categorical_count, 0)
+    model = create_rnn_model(embedding_matrix, categorical_count)
 
     x_train, x_test, y_train, y_test = split_data(x, y)
-    history = model.fit(x_train, y_train, batch_size=5, epochs=65, validation_data=(x_test, y_test))
 
-    distribution_train = analytics.analyze_labels(y_train)
-    distribution_test = analytics.analyze_labels(y_test)
+    history = model.fit(x_train, y_train, batch_size=5, epochs=65, validation_data=(x_test, y_test))
     model.evaluate(x_test, y_test, batch_size=50)
+    analytics.plot_accuracy(history.history)
     analytics.plot_loss(history.history)
-    #analytics.print_model(model)
+    # analytics.print_model(model)
+
 
 def train_fnn(dataset: DataFrame):
     tweets = dataset.iloc[:, 0].values
@@ -43,10 +43,9 @@ def train_fnn(dataset: DataFrame):
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
-    model = create_fnn_model(embedding_matrix, maximum_length, 4, categorical_count, 0.01)
+    model = create_fnn_model(embedding_matrix, maximum_length, categorical_count, 0.01)
     x_train, x_test, y_train, y_test = split_data(x, y)
-    callback = keras.callbacks.EarlyStopping(monitor='loss', patience=3)
-    history = model.fit(x_train, y_train, batch_size=5, epochs=65, validation_data=(x_test, y_test))
+    history = model.fit(x_train, y_train, batch_size=5, epochs=38, validation_data=(x_test, y_test))
 
     distribution_train = analytics.analyze_labels(y_train)
     distribution_test = analytics.analyze_labels(y_test)
@@ -54,19 +53,19 @@ def train_fnn(dataset: DataFrame):
     model.evaluate(x_test, y_test, batch_size=50)
     print(distribution_test)
     print(distribution_train)
+    analytics.plot_accuracy(history.history)
     analytics.plot_loss(history.history)
-    #analytics.plot_label_distribution(analytics.analyze_labels(y))
+    # analytics.plot_label_distribution(analytics.analyze_labels(y))
 
 
-def create_rnn_model(embedding_matrix, time_steps, hidden_units, categorical_count, regularization):
+def create_rnn_model(embedding_matrix, categorical_count):
+    regularization = 0
     model = keras.Sequential()
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
-                                     input_length=time_steps,
                                      trainable=False,
-                                     embeddings_initializer=keras.initializers.Constant(embedding_matrix)))
-    model.add(keras.layers.SimpleRNN(hidden_units, return_sequences=True,
-                                     kernel_regularizer=keras.regularizers.L2(l2=regularization),
-                                     bias_regularizer=keras.regularizers.L2(l2=regularization)))
+                                     embeddings_initializer=keras.initializers.Constant(embedding_matrix),
+                                     mask_zero=True))
+    model.add(keras.layers.SimpleRNN(6, return_sequences=True))
     model.add(keras.layers.SimpleRNN(5, return_sequences=False,
                                      kernel_regularizer=keras.regularizers.L2(l2=regularization),
                                      bias_regularizer=keras.regularizers.L2(l2=regularization)))
@@ -80,7 +79,7 @@ def create_rnn_model(embedding_matrix, time_steps, hidden_units, categorical_cou
     return model
 
 
-def create_fnn_model(embedding_matrix, time_steps, layer_size: int, categorical_count: int,
+def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
                      regularization: float):
     model = keras.Sequential()
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
@@ -89,11 +88,11 @@ def create_fnn_model(embedding_matrix, time_steps, layer_size: int, categorical_
                                      embeddings_initializer=keras.initializers.Constant(embedding_matrix)))
     model.add(keras.layers.Flatten())
 
-    model.add(keras.layers.Dense(6, activation='relu',
+    model.add(keras.layers.Dense(8, activation='relu',
                                  kernel_regularizer=keras.regularizers.L2(l2=regularization),
                                  bias_regularizer=keras.regularizers.L2(l2=regularization)))
 
-    model.add(keras.layers.Dense(5, activation='relu',
+    model.add(keras.layers.Dense(7, activation='relu',
                                  kernel_regularizer=keras.regularizers.L2(l2=regularization),
                                  bias_regularizer=keras.regularizers.L2(l2=regularization)))
 
@@ -118,5 +117,5 @@ def setup_tensorflow():
 if __name__ == '__main__':
     setup_tensorflow()
     data = preprocessor.load_dataset()
-    #train_fnn(data)
+    # train_fnn(data)
     train_rnn(data)
