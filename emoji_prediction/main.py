@@ -4,8 +4,7 @@ import tensorflow as tf
 from pandas import DataFrame
 from tensorflow import keras
 
-import analytics
-import embedding
+from emoji_prediction import analytics, embedding
 import preprocessor
 
 SEED = 3
@@ -30,7 +29,6 @@ def train_rnn(dataset: DataFrame):
     model.evaluate(x_test, y_test, batch_size=50)
     analytics.plot_accuracy(history.history)
     analytics.plot_loss(history.history)
-    # analytics.print_model(model)
 
 
 def train_fnn(dataset: DataFrame):
@@ -45,17 +43,20 @@ def train_fnn(dataset: DataFrame):
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
     model = create_fnn_model(embedding_matrix, maximum_length, categorical_count, 0.01)
     x_train, x_test, y_train, y_test = split_data(x, y)
+
     history = model.fit(x_train, y_train, batch_size=5, epochs=38, validation_data=(x_test, y_test))
 
-    distribution_train = analytics.analyze_labels(y_train)
-    distribution_test = analytics.analyze_labels(y_test)
+    # evaluate test results because the progress bar shows the mean over the batches
+    test_evaluation = model.evaluate(x_test, y_test, batch_size=50)
+    train_evaluation = model.evaluate(x_train, y_train, batch_size=50)
 
-    model.evaluate(x_test, y_test, batch_size=50)
-    print(distribution_test)
-    print(distribution_train)
-    analytics.plot_accuracy(history.history)
+    test_prediction = model.predict(x_test, batch_size=50)
+    train_prediction = model.predict(x_train, batch_size=50)
+    #analytics.plot_accuracy(history.history)
     analytics.plot_loss(history.history)
-    # analytics.plot_label_distribution(analytics.analyze_labels(y))
+    analytics.plot_confusion_matrix(y_test, test_prediction, "fnn_test")
+    analytics.plot_confusion_matrix(y_train, train_prediction, "fnn_train")
+    analytics.print_model(model)
 
 
 def create_rnn_model(embedding_matrix, categorical_count):
@@ -100,7 +101,7 @@ def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
                                  kernel_regularizer=keras.regularizers.L2(l2=regularization),
                                  bias_regularizer=keras.regularizers.L2(l2=regularization)))
     model.compile(loss=keras.losses.CategoricalCrossentropy(),
-                  metrics=["accuracy"])
+                  metrics=["categorical_accuracy", "accuracy", "categorical_crossentropy"])
     print(model.summary())
     return model
 
@@ -117,5 +118,6 @@ def setup_tensorflow():
 if __name__ == '__main__':
     setup_tensorflow()
     data = preprocessor.load_dataset()
-    # train_fnn(data)
-    train_rnn(data)
+
+    train_fnn(data)
+    #train_rnn(data)

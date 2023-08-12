@@ -4,8 +4,9 @@ import re
 import pandas as pd
 from pandas import DataFrame
 
-RAW_DATASET_PATH = "resources/datasets/emoji_data.csv"
-CLEAN_DATASET_PATH = "resources/datasets/cleaned_data.csv"
+RAW_DATASET_PATH = "emoji_prediction/resources/datasets/emoji_data.csv"
+CLEAN_DATASET_PATH = "emoji_prediction/resources/datasets/cleaned_data.csv"
+LABEL_MAPPING_PATH = "emoji_prediction/resources/datasets/label_mapping.csv"
 AT_REGEX = r"@\S*"
 HTML_REGEX = r"https?://\S+"
 SPECIAL_CHAR_REGEX = r"[^a-z\s]"
@@ -44,7 +45,9 @@ def load_dataset() -> DataFrame:
     else:
         data = pd.read_csv(CLEAN_DATASET_PATH, header=None)
     return data
-
+def load_label_mapping() -> DataFrame:
+    data = pd.read_csv(LABEL_MAPPING_PATH, header=None)
+    return data
 
 if __name__ == '__main__':
     load_dataset()

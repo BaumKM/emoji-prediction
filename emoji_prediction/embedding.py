@@ -5,7 +5,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-GLOVE_PATH = 'resources/glove/glove.6B.50d.txt'
+GLOVE_PATH = 'emoji_prediction/resources/glove/glove.6B.50d.txt'
 
 
 def create_text_encoding(dataset: np.ndarray,
