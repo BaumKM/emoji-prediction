@@ -1,23 +1,21 @@
 import numpy as np
 import sklearn.model_selection
 import tensorflow as tf
-from pandas import DataFrame
 from tensorflow import keras
 
+import dataset
+import plotting
 from emoji_prediction import analytics, embedding
-import preprocessor
 
 SEED = 3
 TEST_SIZE = 0.3
 
 
-def train_rnn(dataset: DataFrame):
-    tweets = dataset.iloc[:, 0].values
-    labels = dataset.iloc[:, 1].values
+def train_rnn(tweets: np.ndarray, labels: np.ndarray):
     y = embedding.create_label_encoding(labels)
     categorical_count = y.shape[1]
 
-    vocabulary, maximum_length = analytics.analyze_tweets(tweets)
+    vocabulary, maximum_length = analytics.analyze_tweets()
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
@@ -25,26 +23,28 @@ def train_rnn(dataset: DataFrame):
 
     x_train, x_test, y_train, y_test = split_data(x, y)
 
-    history = model.fit(x_train, y_train, batch_size=5, epochs=65, validation_data=(x_test, y_test))
+    history = model.fit(x_train, y_train, batch_size=5, epochs=100, validation_data=(x_test, y_test))
     model.evaluate(x_test, y_test, batch_size=50)
-    analytics.plot_accuracy(history.history)
-    analytics.plot_loss(history.history)
+    plotting.plot_accuracy(history.history, "rnn")
+    plotting.plot_loss(history.history, "rnn")
+    test_prediction = model.predict(x_test, batch_size=50)
+    train_prediction = model.predict(x_train, batch_size=50)
+    plotting.plot_confusion_matrix(y_test, test_prediction, "rnn_test")
+    plotting.plot_confusion_matrix(y_train, train_prediction, "rnn_train")
 
 
-def train_fnn(dataset: DataFrame):
-    tweets = dataset.iloc[:, 0].values
-    labels = dataset.iloc[:, 1].values
+def train_fnn(tweets: np.ndarray, labels: np.ndarray):
     y = embedding.create_label_encoding(labels)
     categorical_count = y.shape[1]
 
-    vocabulary, maximum_length = analytics.analyze_tweets(tweets)
+    vocabulary, maximum_length = analytics.analyze_tweets()
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
     model = create_fnn_model(embedding_matrix, maximum_length, categorical_count, 0.01)
     x_train, x_test, y_train, y_test = split_data(x, y)
 
-    history = model.fit(x_train, y_train, batch_size=5, epochs=38, validation_data=(x_test, y_test))
+    history = model.fit(x_train, y_train, batch_size=5, epochs=100, validation_data=(x_test, y_test))
 
     # evaluate test results because the progress bar shows the mean over the batches
     test_evaluation = model.evaluate(x_test, y_test, batch_size=50)
@@ -52,11 +52,11 @@ def train_fnn(dataset: DataFrame):
 
     test_prediction = model.predict(x_test, batch_size=50)
     train_prediction = model.predict(x_train, batch_size=50)
-    #analytics.plot_accuracy(history.history)
-    analytics.plot_loss(history.history)
-    analytics.plot_confusion_matrix(y_test, test_prediction, "fnn_test")
-    analytics.plot_confusion_matrix(y_train, train_prediction, "fnn_train")
-    analytics.print_model(model)
+    plotting.plot_accuracy(history.history, "fnn")
+    plotting.plot_loss(history.history, "fnn")
+    plotting.plot_confusion_matrix(y_test, test_prediction, "fnn_test")
+    plotting.plot_confusion_matrix(y_train, train_prediction, "fnn_train")
+    plotting.print_model(model)
 
 
 def create_rnn_model(embedding_matrix, categorical_count):
@@ -75,7 +75,7 @@ def create_rnn_model(embedding_matrix, categorical_count):
                                  bias_regularizer=keras.regularizers.L2(l2=regularization)))
 
     model.compile(loss=keras.losses.CategoricalCrossentropy(),
-                  metrics=["accuracy"])
+                  metrics=["categorical_accuracy", "accuracy", "categorical_crossentropy"])
     print(model.summary())
     return model
 
@@ -117,7 +117,8 @@ def setup_tensorflow():
 
 if __name__ == '__main__':
     setup_tensorflow()
-    data = preprocessor.load_dataset()
+    dataset = dataset.load_dataset()
 
-    train_fnn(data)
-    #train_rnn(data)
+    train_fnn(dataset[0], dataset[1])
+    setup_tensorflow()
+    train_rnn(dataset[0], dataset[1])
