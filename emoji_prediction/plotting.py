@@ -14,10 +14,11 @@ import analytics
 
 dir_name = os.path.dirname(__file__)
 
-CONFUSION_PATH = os.path.join(dir_name, "resources/graphics/confusion/{name}_confusion.png")
-LOSS_PATH = os.path.join(dir_name, "resources/graphics/loss/{name}_loss.png")
-ACCURACY_PATH = os.path.join(dir_name, "resources/graphics/accuracy/{name}_accuracy.png")
-SENTENCE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/cumulative_sentence_length.png")
+CONFUSION_PATH = os.path.join(dir_name, "resources/graphics/confusion/{name}_confusion.eps")
+LOSS_PATH = os.path.join(dir_name, "resources/graphics/loss/{name}_loss.eps")
+ACCURACY_PATH = os.path.join(dir_name, "resources/graphics/accuracy/{name}_accuracy.eps")
+SENTENCE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/cumulative_sentence_length.eps")
+CUMULATIVE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/dataset/cumulative_length.eps")
 FNN_DETAILED_ARCHITECTURE_PATH = os.path.join(dir_name, "resources/graphics/structure/fnn_detailed")
 FFN_ARCHITECTURE_PATH = os.path.join(dir_name, "resources/graphics/structure/fnn.png")
 
@@ -33,8 +34,8 @@ def plot_accuracy(history: dict[str, list], name):
     fig, ax = create_simple_figure()
     x_values = np.arange(1, len(history['accuracy']) + 1)
 
-    ax.set_ylabel("accuracy", labelpad=8, weight='bold')
-    ax.set_xlabel("epoch", labelpad=8, weight='bold')
+    ax.set_ylabel("accuracy", labelpad=8)
+    ax.set_xlabel("epoch", labelpad=8)
 
     ax.plot(x_values, history['accuracy'], label="training data")
     ax.plot(x_values, history['val_accuracy'], label="test data")
@@ -43,7 +44,7 @@ def plot_accuracy(history: dict[str, list], name):
     val_maximum = round(np.max(history['val_accuracy']), 2)
 
     bbox = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-    arrow = dict(arrowstyle="->", connectionstyle="arc", color="blue")
+    arrow = dict(arrowstyle="->", connectionstyle="arc", color="blue", lw=3)
     kw = dict(xycoords='data', textcoords="data", bbox=bbox, ha="left", va="bottom")
     ax.annotate(f"epoch: {val_maximum_pos}, accuracy: {val_maximum}", xy=(val_maximum_pos, val_maximum),
                 arrowprops=arrow,
@@ -51,15 +52,15 @@ def plot_accuracy(history: dict[str, list], name):
 
     ax.legend()
     fig.tight_layout()
-    plt.savefig(ACCURACY_PATH.format(name=name))
+    save_figure(ACCURACY_PATH.format(name=name))
 
 
 def plot_loss(history: dict[str, list], name):
     fig, ax = create_simple_figure()
 
     x_values = np.arange(1, len(history['loss']) + 1)
-    ax.set_ylabel("loss", labelpad=8, weight='bold')
-    ax.set_xlabel("epoch", labelpad=8, weight='bold')
+    ax.set_ylabel("loss", labelpad=8,)
+    ax.set_xlabel("epoch", labelpad=8)
 
     ax.plot(x_values, history['categorical_crossentropy'], label="training data")
     ax.plot(x_values, history['val_categorical_crossentropy'], label="test data")
@@ -68,13 +69,13 @@ def plot_loss(history: dict[str, list], name):
     val_minimum = round(np.min(history['val_categorical_crossentropy']), 2)
 
     bbox = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-    arrow = dict(arrowstyle="->", connectionstyle="arc", color="blue")
+    arrow = dict(arrowstyle="->", connectionstyle="arc", color="blue", lw=3)
     kw = dict(xycoords='data', textcoords="data", bbox=bbox, ha="left", va="bottom")
     ax.annotate(f"epoch: {val_minimum_pos}, loss: {val_minimum}", xy=(val_minimum_pos, val_minimum), arrowprops=arrow,
-                xytext=(val_minimum_pos + 10, val_minimum - 0.2), **kw)
+                xytext=(val_minimum_pos + 10, val_minimum - 0.25), **kw)
     ax.legend()
     fig.tight_layout()
-    plt.savefig(LOSS_PATH.format(name=name))
+    save_figure(LOSS_PATH.format(name=name))
 
 
 def plot_cumulative_length():
@@ -83,22 +84,21 @@ def plot_cumulative_length():
     total_elements = cumulative_length[0]
     relative_cumulative_length = np.around(np.divide(cumulative_length, total_elements), 2)
 
-    ax.set_ylabel("Relative Frequency", labelpad=20, weight='bold')
-    ax.set_xlabel("Tweet Length", labelpad=15, weight='bold')
+    ax.set_ylabel("Relative Frequency", labelpad=20)
+    ax.set_xlabel("Tweet Length", labelpad=15)
 
     bars = ax.bar(values, relative_cumulative_length, width=0.4)
     ax.bar_label(bars, relative_cumulative_length)
     ax.set_xticks(values)
     fig.tight_layout()
-    plt.show()
-    pass
+    save_figure(CUMULATIVE_LENGTH_PATH)
 
 
 def plot_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray, name):
     true_label = np.argmax(y_true, axis=1)
-    pred_label = np.argmax(y_pred, axis=1)
+    predicted_label = np.argmax(y_pred, axis=1)
 
-    confusion_matrix = sk.metrics.confusion_matrix(true_label, pred_label)
+    confusion_matrix = sk.metrics.confusion_matrix(true_label, predicted_label)
 
     fig, ax = plt.subplots()
     sns.heatmap(confusion_matrix, cmap="Blues", annot=True, ax=ax)
@@ -131,14 +131,16 @@ def create_tick_label(x, y, image, axes, box_offset):
 def create_simple_figure():
     plt.style.use("bmh")
     font = {
-        'weight': 'bold',
-        'size': 14}
+        'size': 13}
     matplotlib.rc('font', **font)
     fig, ax = plt.subplots()
     ax.yaxis.get_label().set_fontsize(15)
     ax.xaxis.get_label().set_fontsize(15)
 
     return fig, ax
+
+def save_figure(path):
+    plt.savefig(path, dpi=1200)
 
 
 if __name__ == '__main__':
