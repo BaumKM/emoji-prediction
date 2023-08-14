@@ -59,7 +59,7 @@ def plot_loss(history: dict[str, list], name):
     fig, ax = create_simple_figure()
 
     x_values = np.arange(1, len(history['loss']) + 1)
-    ax.set_ylabel("loss", labelpad=8,)
+    ax.set_ylabel("loss", labelpad=8, )
     ax.set_xlabel("epoch", labelpad=8)
 
     ax.plot(x_values, history['categorical_crossentropy'], label="training data")
@@ -138,6 +138,7 @@ def create_simple_figure():
     ax.xaxis.get_label().set_fontsize(15)
 
     return fig, ax
+
 
 def save_figure(path):
     plt.savefig(path, dpi=1200)
