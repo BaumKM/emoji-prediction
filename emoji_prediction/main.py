@@ -4,6 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 import dataset
+import evaluation
 import plotting
 from emoji_prediction import analytics, embedding
 
@@ -12,6 +13,7 @@ TEST_SIZE = 0.3
 
 
 def train_rnn(tweets: np.ndarray, labels: np.ndarray):
+    name = "rnn"
     y = embedding.create_label_encoding(labels)
     categorical_count = y.shape[1]
 
@@ -19,21 +21,16 @@ def train_rnn(tweets: np.ndarray, labels: np.ndarray):
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
-    model = create_rnn_model(embedding_matrix, categorical_count)
+    model = create_rnn_model(embedding_matrix, categorical_count, name=name)
 
     x_train, x_test, y_train, y_test = split_data(x, y)
 
     history = model.fit(x_train, y_train, batch_size=5, epochs=100, validation_data=(x_test, y_test))
-    model.evaluate(x_test, y_test, batch_size=50)
-    plotting.plot_accuracy(history.history, "rnn")
-    plotting.plot_loss(history.history, "rnn")
-    test_prediction = model.predict(x_test, batch_size=50)
-    train_prediction = model.predict(x_train, batch_size=50)
-    plotting.plot_confusion_matrix(y_test, test_prediction, "rnn_test")
-    plotting.plot_confusion_matrix(y_train, train_prediction, "rnn_train")
+    evaluation.evaluate_model(model,x_train, x_test, y_train, y_test, history.history)
 
 
 def train_fnn(tweets: np.ndarray, labels: np.ndarray):
+    name="fnn"
     y = embedding.create_label_encoding(labels)
     categorical_count = y.shape[1]
 
@@ -41,27 +38,18 @@ def train_fnn(tweets: np.ndarray, labels: np.ndarray):
     x, decoder = embedding.create_text_encoding(tweets, vocabulary, maximum_length)
 
     embedding_matrix, count = embedding.create_embedding_matrix(decoder)
-    model = create_fnn_model(embedding_matrix, maximum_length, categorical_count, 0.01)
+    model = create_fnn_model(embedding_matrix, maximum_length, categorical_count, 0.01, name)
     x_train, x_test, y_train, y_test = split_data(x, y)
 
-    history = model.fit(x_train, y_train, batch_size=5, epochs=100, validation_data=(x_test, y_test))
-
-    # evaluate test results because the progress bar shows the mean over the batches
-    test_evaluation = model.evaluate(x_test, y_test, batch_size=50)
-    train_evaluation = model.evaluate(x_train, y_train, batch_size=50)
-
-    test_prediction = model.predict(x_test, batch_size=50)
-    train_prediction = model.predict(x_train, batch_size=50)
-    plotting.plot_accuracy(history.history, "fnn")
-    plotting.plot_loss(history.history, "fnn")
-    plotting.plot_confusion_matrix(y_test, test_prediction, "fnn_test")
-    plotting.plot_confusion_matrix(y_train, train_prediction, "fnn_train")
-    plotting.print_model(model)
+    history = model.fit(x_train, y_train, batch_size=5, epochs=37, validation_data=(x_test, y_test))
+    evaluation.evaluate_model(model,x_train, x_test, y_train, y_test, history.history)
 
 
-def create_rnn_model(embedding_matrix, categorical_count):
+
+
+def create_rnn_model(embedding_matrix, categorical_count, name):
     regularization = 0
-    model = keras.Sequential()
+    model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      trainable=False,
                                      embeddings_initializer=keras.initializers.Constant(embedding_matrix),
@@ -81,8 +69,8 @@ def create_rnn_model(embedding_matrix, categorical_count):
 
 
 def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
-                     regularization: float):
-    model = keras.Sequential()
+                     regularization: float, name):
+    model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      input_length=time_steps,
                                      trainable=False,

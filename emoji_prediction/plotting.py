@@ -14,7 +14,7 @@ import analytics
 
 dir_name = os.path.dirname(__file__)
 
-CONFUSION_PATH = os.path.join(dir_name, "resources/graphics/confusion/{name}_confusion.eps")
+CONFUSION_PATH = os.path.join(dir_name, "resources/graphics/confusion/{name}_confusion.png")
 LOSS_PATH = os.path.join(dir_name, "resources/graphics/loss/{name}_loss.eps")
 ACCURACY_PATH = os.path.join(dir_name, "resources/graphics/accuracy/{name}_accuracy.eps")
 SENTENCE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/cumulative_sentence_length.eps")
@@ -59,7 +59,7 @@ def plot_loss(history: dict[str, list], name):
     fig, ax = create_simple_figure()
 
     x_values = np.arange(1, len(history['loss']) + 1)
-    ax.set_ylabel("loss", labelpad=8, )
+    ax.set_ylabel("loss", labelpad=8)
     ax.set_xlabel("epoch", labelpad=8)
 
     ax.plot(x_values, history['categorical_crossentropy'], label="training data")
@@ -94,10 +94,7 @@ def plot_cumulative_length():
     save_figure(CUMULATIVE_LENGTH_PATH)
 
 
-def plot_confusion_matrix(y_true: np.ndarray, y_pred: np.ndarray, name):
-    true_label = np.argmax(y_true, axis=1)
-    predicted_label = np.argmax(y_pred, axis=1)
-
+def plot_confusion_matrix(true_label: np.ndarray, predicted_label: np.ndarray, name):
     confusion_matrix = sk.metrics.confusion_matrix(true_label, predicted_label)
 
     fig, ax = plt.subplots()
