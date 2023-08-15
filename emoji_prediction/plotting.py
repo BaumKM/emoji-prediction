@@ -14,13 +14,13 @@ import analytics
 
 dir_name = os.path.dirname(__file__)
 
-CONFUSION_PATH = os.path.join(dir_name, "resources/graphics/confusion/{name}_confusion.png")
-LOSS_PATH = os.path.join(dir_name, "resources/graphics/loss/{name}_loss.eps")
-ACCURACY_PATH = os.path.join(dir_name, "resources/graphics/accuracy/{name}_accuracy.eps")
-SENTENCE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/cumulative_sentence_length.eps")
-CUMULATIVE_LENGTH_PATH = os.path.join(dir_name, "resources/graphics/dataset/dataset/cumulative_length.eps")
-FNN_DETAILED_ARCHITECTURE_PATH = os.path.join(dir_name, "resources/graphics/structure/fnn_detailed")
-FFN_ARCHITECTURE_PATH = os.path.join(dir_name, "resources/graphics/structure/fnn.png")
+CONFUSION_PATH = os.path.join(dir_name, "../out/graphics/confusion/{name}_confusion.png")
+LOSS_PATH = os.path.join(dir_name, "../out/graphics/loss/{name}_loss.eps")
+ACCURACY_PATH = os.path.join(dir_name, "../out/graphics/accuracy/{name}_accuracy.eps")
+SENTENCE_LENGTH_PATH = os.path.join(dir_name, "../out/graphics/dataset/cumulative_sentence_length.eps")
+CUMULATIVE_LENGTH_PATH = os.path.join(dir_name, "../out/graphics/dataset/dataset/cumulative_length.eps")
+FNN_DETAILED_ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/fnn_detailed")
+FFN_ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/fnn.png")
 
 image_names = ["red-heart", "baseball", "happy", "disappointed", "dishes"]
 
