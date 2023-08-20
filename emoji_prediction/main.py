@@ -5,7 +5,6 @@ from tensorflow import keras
 
 import dataset
 import evaluation
-import plotting
 from emoji_prediction import analytics, embedding
 
 SEED = 3
@@ -26,7 +25,7 @@ def train_rnn(tweets: np.ndarray, labels: np.ndarray):
     x_train, x_test, y_train, y_test = split_data(x, y)
 
     history = model.fit(x_train, y_train, batch_size=5, epochs=100, validation_data=(x_test, y_test))
-    evaluation.evaluate_model(model,x_train, x_test, y_train, y_test, history.history)
+    evaluation.evaluate_model(model, x_train, x_test, y_train, y_test, history.history)
 
 
 def train_fnn(tweets: np.ndarray, labels: np.ndarray):
@@ -42,7 +41,7 @@ def train_fnn(tweets: np.ndarray, labels: np.ndarray):
     x_train, x_test, y_train, y_test = split_data(x, y)
 
     history = model.fit(x_train, y_train, batch_size=5, epochs=37, validation_data=(x_test, y_test))
-    evaluation.evaluate_model(model,x_train, x_test, y_train, y_test, history.history)
+    evaluation.evaluate_model(model, x_train, x_test, y_train, y_test, history.history)
 
 
 
