@@ -22,6 +22,7 @@ def evaluate_model(model, x_train, x_test, y_train, y_test, training_history):
     precision = sk.metrics.precision_score(actual_test_label, test_prediction, average="macro")
     recall = sk.metrics.recall_score(actual_test_label, test_prediction, average="macro")
     f1 = sk.metrics.f1_score(actual_test_label, test_prediction, average="macro")
+    f1_detailed = sk.metrics.f1_score(actual_test_label, test_prediction, average=None)
     print(f"precision: {precision}")
     print(f"recall: {recall}")
     print(f"f1: {f1}")
