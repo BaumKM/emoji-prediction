@@ -29,7 +29,7 @@ def train_rnn(tweets: np.ndarray, labels: np.ndarray):
 
 
 def train_fnn(tweets: np.ndarray, labels: np.ndarray):
-    name="fnn"
+    name = "fnn"
     y = embedding.create_label_encoding(labels)
     categorical_count = y.shape[1]
 
@@ -42,8 +42,6 @@ def train_fnn(tweets: np.ndarray, labels: np.ndarray):
 
     history = model.fit(x_train, y_train, batch_size=5, epochs=37, validation_data=(x_test, y_test))
     evaluation.evaluate_model(model, x_train, x_test, y_train, y_test, history.history)
-
-
 
 
 def create_rnn_model(embedding_matrix, categorical_count, name: str):

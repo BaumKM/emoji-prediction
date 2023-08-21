@@ -27,7 +27,8 @@ image_names = ["red-heart", "baseball", "happy", "disappointed", "dishes"]
 
 def print_model(model):
     visualizer(model, file_name=DETAILED_ARCHITECTURE_PATH.format(name=model.name), file_format='png', view=False)
-    keras.utils.plot_model(model, to_file=ARCHITECTURE_PATH.format(name=model.name), show_shapes=True, show_layer_names=True)
+    keras.utils.plot_model(model, to_file=ARCHITECTURE_PATH.format(name=model.name), show_shapes=True,
+                           show_layer_names=True)
 
 
 def plot_accuracy(history: dict[str, list], name):

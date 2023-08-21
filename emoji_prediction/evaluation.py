@@ -1,8 +1,11 @@
 import numpy as np
 import sklearn as sk
+
 import plotting
 
 BATCH_SIZE = 50
+
+
 def evaluate_model(model, x_train, x_test, y_train, y_test, training_history):
     train_evaluation = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
     # also evaluate test results because the progress bar shows the mean over the batches
@@ -30,4 +33,3 @@ def evaluate_model(model, x_train, x_test, y_train, y_test, training_history):
 
 def get_most_likely_label(prediction):
     return np.argmax(prediction, axis=1)
-
