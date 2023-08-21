@@ -18,11 +18,8 @@ def analyze_tweets() -> (np.ndarray, int):
 
 def analyze_labels():
     labels = load_labels()
-    result = [0 for x in range(labels.shape[1])]
-    for row in range(labels.shape[0]):
-        label = np.argmax(labels[row])
-        result[label] += 1
-    return result
+    label_distribution = np.unique(labels, return_counts=True)
+    return label_distribution
 
 
 def create_cumulative_length_distribution():
