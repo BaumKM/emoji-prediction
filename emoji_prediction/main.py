@@ -46,20 +46,15 @@ def train_fnn(tweets: np.ndarray, labels: np.ndarray):
 
 
 
-def create_rnn_model(embedding_matrix, categorical_count, name):
-    regularization = 0
+def create_rnn_model(embedding_matrix, categorical_count, name: str):
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      trainable=False,
                                      embeddings_initializer=keras.initializers.Constant(embedding_matrix),
                                      mask_zero=True))
     model.add(keras.layers.SimpleRNN(6, return_sequences=True))
-    model.add(keras.layers.SimpleRNN(5, return_sequences=False,
-                                     kernel_regularizer=keras.regularizers.L2(l2=regularization),
-                                     bias_regularizer=keras.regularizers.L2(l2=regularization)))
-    model.add(keras.layers.Dense(categorical_count, activation='softmax',
-                                 kernel_regularizer=keras.regularizers.L2(l2=regularization),
-                                 bias_regularizer=keras.regularizers.L2(l2=regularization)))
+    model.add(keras.layers.SimpleRNN(5, return_sequences=False))
+    model.add(keras.layers.Dense(categorical_count, activation='softmax'))
 
     model.compile(loss=keras.losses.CategoricalCrossentropy(),
                   metrics=["categorical_accuracy", "accuracy", "categorical_crossentropy"])
@@ -68,7 +63,7 @@ def create_rnn_model(embedding_matrix, categorical_count, name):
 
 
 def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
-                     regularization: float, name):
+                     regularization: float, name: str):
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      input_length=time_steps,

@@ -19,15 +19,15 @@ LOSS_PATH = os.path.join(dir_name, "../out/graphics/loss/{name}_loss.eps")
 ACCURACY_PATH = os.path.join(dir_name, "../out/graphics/accuracy/{name}_accuracy.eps")
 SENTENCE_LENGTH_PATH = os.path.join(dir_name, "../out/graphics/dataset/cumulative_sentence_length.eps")
 CUMULATIVE_LENGTH_PATH = os.path.join(dir_name, "../out/graphics/dataset/dataset/cumulative_length.eps")
-FNN_DETAILED_ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/fnn_detailed")
-FFN_ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/fnn.png")
+DETAILED_ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/{name}_detailed")
+ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/{name}.png")
 
 image_names = ["red-heart", "baseball", "happy", "disappointed", "dishes"]
 
 
 def print_model(model):
-    visualizer(model, file_name=FNN_DETAILED_ARCHITECTURE_PATH, file_format='png', view=False)
-    keras.utils.plot_model(model, to_file=FFN_ARCHITECTURE_PATH, show_shapes=True, show_layer_names=True)
+    visualizer(model, file_name=DETAILED_ARCHITECTURE_PATH.format(name=model.name), file_format='png', view=False)
+    keras.utils.plot_model(model, to_file=ARCHITECTURE_PATH.format(name=model.name), show_shapes=True, show_layer_names=True)
 
 
 def plot_accuracy(history: dict[str, list], name):
