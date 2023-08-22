@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import numpy as np
@@ -5,7 +6,8 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 
-GLOVE_PATH = 'emoji_prediction/resources/glove/glove.6B.50d.txt'
+dir_name = os.path.dirname(__file__)
+GLOVE_PATH = os.path.join(dir_name, 'resources/glove/glove.6B.50d.txt')
 
 
 def create_text_encoding(dataset: np.ndarray,
