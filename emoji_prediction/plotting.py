@@ -1,6 +1,7 @@
 import os
 
 import matplotlib
+import tensorflow as tf
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
@@ -25,13 +26,13 @@ ARCHITECTURE_PATH = os.path.join(dir_name, "../out/graphics/structure/{name}.png
 image_names = ["red-heart", "baseball", "happy", "disappointed", "dishes"]
 
 
-def print_model(model):
+def print_model(model: tf.keras.Model):
     visualizer(model, file_name=DETAILED_ARCHITECTURE_PATH.format(name=model.name), file_format='png', view=False)
     keras.utils.plot_model(model, to_file=ARCHITECTURE_PATH.format(name=model.name), show_shapes=True,
                            show_layer_names=True)
 
 
-def plot_accuracy(history: dict[str, list], name):
+def plot_accuracy(history: dict[str, list], name: str):
     fig, ax = create_simple_figure()
     x_values = np.arange(1, len(history['accuracy']) + 1)
 
@@ -56,7 +57,7 @@ def plot_accuracy(history: dict[str, list], name):
     save_figure(ACCURACY_PATH.format(name=name))
 
 
-def plot_loss(history: dict[str, list], name):
+def plot_loss(history: dict[str, list], name: str):
     fig, ax = create_simple_figure()
 
     x_values = np.arange(1, len(history['loss']) + 1)
@@ -95,7 +96,7 @@ def plot_cumulative_length():
     save_figure(CUMULATIVE_LENGTH_PATH)
 
 
-def plot_confusion_matrix(true_label: np.ndarray, predicted_label: np.ndarray, name):
+def plot_confusion_matrix(true_label: np.ndarray, predicted_label: np.ndarray, name: str):
     confusion_matrix = sk.metrics.confusion_matrix(true_label, predicted_label)
 
     fig, ax = plt.subplots()
@@ -118,7 +119,7 @@ def plot_confusion_matrix(true_label: np.ndarray, predicted_label: np.ndarray, n
     plt.savefig(CONFUSION_PATH.format(name=name))
 
 
-def create_tick_label(x, y, image, axes, box_offset):
+def create_tick_label(x: float, y: float, image: np.ndarray, axes: matplotlib.axes.Axes, box_offset: (float, float)):
     offset_image = OffsetImage(image, zoom=0.2)
     offset_image.image.axes = axes
     annotation_box = AnnotationBbox(offset_image, (x, y), xybox=box_offset, frameon=False,
@@ -126,7 +127,7 @@ def create_tick_label(x, y, image, axes, box_offset):
     axes.add_artist(annotation_box)
 
 
-def create_simple_figure():
+def create_simple_figure() -> (matplotlib.figure.Figure, matplotlib.axes.Axes):
     plt.style.use("bmh")
     font = {
         'size': 13}
@@ -138,7 +139,7 @@ def create_simple_figure():
     return fig, ax
 
 
-def save_figure(path):
+def save_figure(path: str):
     plt.savefig(path, dpi=1200)
 
 

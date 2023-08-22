@@ -44,7 +44,7 @@ def train_fnn(tweets: np.ndarray, labels: np.ndarray):
     evaluation.evaluate_model(model, x_train, x_test, y_train, y_test, history.history)
 
 
-def create_rnn_model(embedding_matrix, categorical_count, name: str):
+def create_rnn_model(embedding_matrix: np.ndarray, categorical_count: int, name: str) -> keras.Model:
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      trainable=False,
@@ -60,8 +60,8 @@ def create_rnn_model(embedding_matrix, categorical_count, name: str):
     return model
 
 
-def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
-                     regularization: float, name: str):
+def create_fnn_model(embedding_matrix: np.ndarray, time_steps: int, categorical_count: int,
+                     regularization: float, name: str) -> keras.Model:
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      input_length=time_steps,
@@ -86,7 +86,7 @@ def create_fnn_model(embedding_matrix, time_steps, categorical_count: int,
     return model
 
 
-def split_data(x: np.ndarray, y: np.ndarray):
+def split_data(x: np.ndarray, y: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
     return sklearn.model_selection.train_test_split(x, y, test_size=TEST_SIZE, random_state=SEED)
 
 
