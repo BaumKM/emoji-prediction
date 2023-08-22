@@ -40,5 +40,5 @@ def load_tweets() -> np.ndarray:
     return dataset.load_dataset()[0]
 
 
-def load_labels()  -> np.ndarray:
+def load_labels() -> np.ndarray:
     return dataset.load_dataset()[1]

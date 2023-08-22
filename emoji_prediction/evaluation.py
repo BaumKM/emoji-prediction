@@ -3,12 +3,14 @@ from typing import Dict, List
 import numpy as np
 import sklearn as sk
 import tensorflow as tf
+
 import plotting
 
 BATCH_SIZE = 50
 
 
-def evaluate_model(model: tf.keras.Model, x_train: np.ndarray, x_test: np.ndarray, y_train: np.ndarray, y_test: np.ndarray, training_history: Dict[str, List[float]]):
+def evaluate_model(model: tf.keras.Model, x_train: np.ndarray, x_test: np.ndarray, y_train: np.ndarray,
+                   y_test: np.ndarray, training_history: Dict[str, List[float]]):
     train_evaluation = model.evaluate(x_train, y_train, batch_size=BATCH_SIZE)
     # also evaluate test results because the progress bar shows the mean over the batches
     test_evaluation = model.evaluate(x_test, y_test, batch_size=BATCH_SIZE)

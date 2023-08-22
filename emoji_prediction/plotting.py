@@ -1,12 +1,12 @@
 import os
 
 import matplotlib
-import tensorflow as tf
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import sklearn as sk
+import tensorflow as tf
 from keras_visualizer import visualizer
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from tensorflow import keras
