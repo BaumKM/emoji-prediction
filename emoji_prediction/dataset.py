@@ -50,9 +50,9 @@ def load_dataset() -> (np.ndarray, np.ndarray):
     return data.iloc[:, 0].values, data.iloc[:, 1].values
 
 
-def load_label_mapping() -> DataFrame:
+def load_label_mapping() -> np.ndarray:
     data = pd.read_csv(LABEL_MAPPING_PATH, header=None)
-    return data
+    return data.values
 
 
 if __name__ == '__main__':
