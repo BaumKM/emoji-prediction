@@ -15,7 +15,7 @@ def train_rnn(dataset: np.ndarray):
     tweets = dataset[0]
     labels = dataset[1]
     name = "rnn"
-    y = embedding.create_label_encoding(labels)
+    y = embedding.create_one_hot_encoding(labels)
     categorical_count = y.shape[1]
 
     vocabulary, maximum_length = analytics.analyze_tweets(tweets)
@@ -34,7 +34,7 @@ def train_fnn(dataset: np.ndarray):
     tweets = dataset[0]
     labels = dataset[1]
     name = "fnn"
-    y = embedding.create_label_encoding(labels)
+    y = embedding.create_one_hot_encoding(labels)
     categorical_count = y.shape[1]
 
     vocabulary, maximum_length = analytics.analyze_tweets(tweets)
