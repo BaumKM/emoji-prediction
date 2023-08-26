@@ -12,6 +12,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from tensorflow import keras
 
 import analytics
+import dataset
 
 dir_name = os.path.dirname(__file__)
 
@@ -82,7 +83,7 @@ def plot_loss(history: dict[str, list], name: str):
 
 def plot_cumulative_length():
     fig, ax = create_simple_figure()
-    values, cumulative_length = analytics.create_cumulative_length_distribution()
+    values, cumulative_length = analytics.create_cumulative_length_distribution(load_tweets())
     total_elements = cumulative_length[0]
     relative_cumulative_length = np.around(np.divide(cumulative_length, total_elements), 2)
 
@@ -141,6 +142,14 @@ def create_simple_figure() -> (matplotlib.figure.Figure, matplotlib.axes.Axes):
 
 def save_figure(path: str):
     plt.savefig(path, dpi=1200)
+
+
+def load_tweets() -> np.ndarray:
+    return dataset.load_dataset()[0]
+
+
+def load_labels() -> np.ndarray:
+    return dataset.load_dataset()[1]
 
 
 if __name__ == '__main__':
