@@ -41,6 +41,10 @@ def __save_dataset(dataset: DataFrame):
 
 
 def load_dataset() -> (np.ndarray, np.ndarray):
+    """
+    Loads the cleaned dataset. If the cleaned dataset is not present it loads the raw dataset and cleans it.
+    :return: cleaned dataset
+    """
     if not os.path.exists(CLEAN_DATASET_PATH):
         print("Loading dataset")
         data = __clean_dataset()
@@ -51,6 +55,10 @@ def load_dataset() -> (np.ndarray, np.ndarray):
 
 
 def load_label_mapping() -> np.ndarray:
+    """
+    Loads the label mapping.
+    :return: label mapping
+    """
     data = pd.read_csv(LABEL_MAPPING_PATH, header=None)
     return data.values
 
