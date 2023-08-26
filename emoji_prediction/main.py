@@ -65,7 +65,7 @@ def create_rnn(embedding_matrix: np.ndarray, categorical_count: int, name: str) 
 
 
 def create_fnn(embedding_matrix: np.ndarray, time_steps: int, categorical_count: int,
-                     regularization: float, name: str) -> keras.Model:
+               regularization: float, name: str) -> keras.Model:
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      input_length=time_steps,
@@ -97,6 +97,8 @@ def split_data(x: np.ndarray, y: np.ndarray) -> (np.ndarray, np.ndarray, np.ndar
 def setup_tensorflow():
     tf.keras.utils.set_random_seed(SEED)
     tf.config.experimental.enable_op_determinism()
+
+
 def main():
     dataset = data.load_dataset()
 
@@ -109,4 +111,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -11,6 +11,8 @@ def analyze_tweets(tweets: np.ndarray) -> (np.ndarray, int):
     unique_vocabulary = np.unique(vocabulary)
 
     return unique_vocabulary, maximum_length
+
+
 def analyze_labels(labels: np.ndarray) -> (np.ndarray, np.ndarray):
     label_distribution = np.unique(labels, return_counts=True)
     return label_distribution
@@ -27,4 +29,3 @@ def create_cumulative_length_distribution(tweets: np.ndarray) -> (np.ndarray, np
 
 def create_length_distribution(tweets: np.ndarray) -> list[int]:
     return [len(sentence.split()) for sentence in tweets]
-
