@@ -12,6 +12,11 @@ TEST_SIZE = 0.3
 
 
 def train_rnn(dataset: np.ndarray):
+    """
+    Trains the RNN.
+    :param dataset: dataset
+    :return: None
+    """
     tweets = dataset[0]
     labels = dataset[1]
     name = "rnn"
@@ -31,6 +36,11 @@ def train_rnn(dataset: np.ndarray):
 
 
 def train_fnn(dataset: np.ndarray):
+    """
+    Trains the FNN.
+    :param dataset: dataset
+    :return: None
+    """
     tweets = dataset[0]
     labels = dataset[1]
     name = "fnn"
@@ -49,6 +59,13 @@ def train_fnn(dataset: np.ndarray):
 
 
 def create_rnn(embedding_matrix: np.ndarray, categorical_count: int, name: str) -> keras.Model:
+    """
+    Creates the RNN model.
+    :param embedding_matrix: embedding matrix
+    :param categorical_count: number of labels
+    :param name: name of the model
+    :return: compiled model
+    """
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      trainable=False,
@@ -66,6 +83,15 @@ def create_rnn(embedding_matrix: np.ndarray, categorical_count: int, name: str) 
 
 def create_fnn(embedding_matrix: np.ndarray, time_steps: int, categorical_count: int,
                regularization: float, name: str) -> keras.Model:
+    """
+        Creates the FNN model.
+        :param embedding_matrix: embedding matrix
+        :param time_steps: maximum sequence length
+        :param categorical_count: number of labels
+        :param regularization: value of the L2 regularization
+        :param name: name of the model
+        :return: compiled model
+    """
     model = keras.Sequential(name=name)
     model.add(keras.layers.Embedding(input_dim=embedding_matrix.shape[0], output_dim=embedding_matrix.shape[1],
                                      input_length=time_steps,
@@ -91,10 +117,20 @@ def create_fnn(embedding_matrix: np.ndarray, time_steps: int, categorical_count:
 
 
 def split_data(x: np.ndarray, y: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+    """
+    Splits the dataset into a test and training dataset.
+    :param x: input data
+    :param y: target output data
+    :return: Tuple with four entries: (x_train, x_test, y_train, y_test)
+    """
     return sklearn.model_selection.train_test_split(x, y, test_size=TEST_SIZE, random_state=SEED)
 
 
 def setup_tensorflow():
+    """
+    Initializes tensorflow, to get reproducible results.
+    :return: None
+    """
     tf.keras.utils.set_random_seed(SEED)
     tf.config.experimental.enable_op_determinism()
 
